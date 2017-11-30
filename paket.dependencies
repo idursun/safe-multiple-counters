@@ -1,0 +1,15 @@
+source https://api.nuget.org/v3/index.json
+
+nuget Fable.Core
+nuget Fable.Elmish.Debugger
+nuget Fable.Elmish.React
+nuget Fable.Elmish.HMR
+nuget FSharp.Core
+nuget Suave
+
+clitool dotnet-fable
+
+group Build
+  source https://api.nuget.org/v3/index.json
+
+  nuget FAKE

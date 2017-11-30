@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Ibrahim.Dursun\.Rider2017.2\system\resharper-host\temp\ReSharperHost\v10\SolutionCaches\_Client.2043728312.00" t="ExcludeRecursive" />
+    <e p="D:\repositories\safe-stack\src\Client" t="IncludeRecursive">
+      <e p="App.fs" t="Include" />
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Client.fsproj" t="IncludeRecursive" />
+      <e p="Client.sln" t="IncludeFlat" />
+      <e p="components" t="Include">
+        <e p="Counter.fs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive" />
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+  </component>
+</project>
