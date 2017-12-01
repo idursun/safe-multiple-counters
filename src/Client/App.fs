@@ -7,19 +7,35 @@ open Counter
 open Fable.Helpers.React.Props
 module R = Fable.Helpers.React
 
+open Fable.PowerPack.Fetch
+
 
 type Model = {
     counters: Counter.Model list
   }
 
 type Msg =
+  | Init of Result<int, exn>
   | CounterMsg of int * Counter.Msg
 
-let init () = { counters = [Counter.init (); Counter.init ()] }
+let init () = 
+  let model = { counters = [Counter.init (); Counter.init ()] }
+  let cmd = Cmd.ofPromise 
+              (fetchAs<int> "/api/init") 
+              [] 
+              (Ok >> Init) 
+              (Error >> Init)
+  model, cmd
+
 
 let update msg (model : Model) =
-  match msg with
-  | CounterMsg (index, m) -> { model with counters = model.counters |> List.mapi (fun i c -> if i = index then (Counter.update m c) else c) }
+  let model', cmd = match msg with
+                    | Init (Ok v) -> {model with counters = [v; v]}, Cmd.none
+                    | Init (Error _) -> {model with counters = [0; 0]}, Cmd.none
+                    | CounterMsg (index, m) -> 
+                      let _updatedCounters =  model.counters |> List.mapi(fun i c-> if  i = index then fst (Counter.update m c) else c)
+                      { model with counters = _updatedCounters}, Cmd.none
+  model', cmd
 
 let view model dispatch =
   let combined i m = CounterMsg (i, m) |> dispatch
@@ -30,7 +46,7 @@ open Elmish.Debug
 open Elmish.HMR
 #endif
 
-Program.mkSimple init update view
+Program.mkProgram init update view
 #if DEBUG
 |> Program.withConsoleTrace
 |> Program.withHMR

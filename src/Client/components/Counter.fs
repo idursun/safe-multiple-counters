@@ -1,5 +1,6 @@
 module Counter
 
+open Elmish
 open Fable.Helpers.React.Props
 module R = Fable.Helpers.React
 
@@ -10,9 +11,10 @@ type Msg = Increment | Decrement
 let init () = 0
 
 let update msg model =
-    match msg  with
-    |Increment -> model + 1
-    |Decrement -> model - 1
+    let model' = match msg  with
+                 |Increment -> model + 1
+                 |Decrement -> model - 1
+    model', Cmd.none
 
 
 let view model dispatch =
