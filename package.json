@@ -3,6 +3,7 @@
   "dependencies": {
     "babel-polyfill": "6.26.0",
     "babel-runtime": "6.26.0",
+    "bulma": "^0.6.1",
     "react": "16.1.1",
     "react-bootstrap": "0.31.5",
     "react-dom": "16.1.1",
@@ -14,8 +15,10 @@
     "babel-plugin-transform-runtime": "6.23.0",
     "babel-preset-env": "1.6.1",
     "concurrently": "3.5.1",
+    "css-loader": "^0.28.7",
     "fable-loader": "1.1.6",
     "fable-utils": "1.0.6",
+    "style-loader": "^0.19.0",
     "webpack": "3.8.1",
     "webpack-dev-server": "2.9.4"
   },

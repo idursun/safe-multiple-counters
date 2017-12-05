@@ -8,7 +8,9 @@ open Fable.Helpers.React.Props
 module R = Fable.Helpers.React
 
 open Fable.PowerPack.Fetch
+open Fable.Core
 
+[<Import("default", from="bulma/css/bulma.css")>]
 
 type Model = {
     counters: Counter.Model list
@@ -38,8 +40,9 @@ let update msg (model : Model) =
   model', cmd
 
 let view model dispatch =
-  let combined i m = CounterMsg (i, m) |> dispatch
-  model.counters |> List.mapi (fun index m -> view m (combined index)) |> R.div []
+  let combined i m = dispatch (CounterMsg (i, m))
+  R.div [] [ R.h1 [] [R.str "something"] 
+             R.div [] (model.counters |> List.mapi (fun index m -> view m (combined index))) ]
 
 #if DEBUG
 open Elmish.Debug

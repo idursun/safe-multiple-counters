@@ -19,6 +19,6 @@ let update msg model =
 
 let view model dispatch =
   R.div []
-      [ R.button [ OnClick (fun _ -> dispatch Decrement) ] [ R.str "-" ]
+      [ R.button [ ClassName "button"; OnClick (fun _ -> dispatch Decrement) ] [ R.str "-" ]
         R.div [] [ R.str (sprintf "%A" model) ]
-        R.button [ OnClick (fun _ -> dispatch Increment) ] [ R.str "+" ] ]
+        R.button [ ClassName "button"; OnClick (fun _ -> dispatch Increment) ] [ R.str "+" ] ]
