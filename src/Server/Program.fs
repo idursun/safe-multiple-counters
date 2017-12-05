@@ -4,6 +4,8 @@ open System.Net
 
 open Suave
 open Suave.Operators
+open Suave.Json
+open System.Runtime.Serialization
 
 let path = Path.Combine("src","Client") |> Path.GetFullPath
 let port = 8085us
@@ -18,10 +20,26 @@ let init =
   |> string
   |> Successful.OK
 
+[<DataContract>]
+type SomeData = { 
+  name: string; 
+  age: int
+}
+
+let somedata = { name = "name goes here"; age = 32 }
+
+let somedataHandler =
+  somedata
+  |> toJson
+  |> string
+  |> Successful.OK
+
+
 
 let webpart = 
   choose [
     Filters.path "/api/init" >=> init
+    Filters.path "/api/somedata" >=> somedataHandler
     Files.browseHome
   ]
 

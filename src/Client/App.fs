@@ -39,7 +39,7 @@ let update msg (model : Model) =
 
 let view model dispatch =
   let combined i m = CounterMsg (i, m) |> dispatch
-  model.counters |> List.mapi (fun index m -> Counter.view m (combined index)) |> R.div []
+  model.counters |> List.mapi (fun index m -> view m (combined index)) |> R.div []
 
 #if DEBUG
 open Elmish.Debug
