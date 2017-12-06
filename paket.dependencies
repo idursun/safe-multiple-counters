@@ -5,6 +5,7 @@ nuget Fable.Elmish.Debugger
 nuget Fable.Elmish.React
 nuget Fable.Elmish.HMR
 nuget FSharp.Core
+nuget Fulma
 nuget Suave
 
 clitool dotnet-fable
