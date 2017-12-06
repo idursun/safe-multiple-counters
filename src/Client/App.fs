@@ -9,8 +9,9 @@ module R = Fable.Helpers.React
 
 open Fable.PowerPack.Fetch
 open Fable.Core
+open Fable.Core.JsInterop
 
-[<Import("default", from="bulma/css/bulma.css")>]
+importAll "bulma/css/bulma.css"
 
 type Model = {
     counters: Counter.Model list
@@ -35,14 +36,47 @@ let update msg (model : Model) =
                     | Init (Ok v) -> {model with counters = [v; v]}, Cmd.none
                     | Init (Error _) -> {model with counters = [0; 0]}, Cmd.none
                     | CounterMsg (index, m) -> 
-                      let _updatedCounters =  model.counters |> List.mapi(fun i c-> if  i = index then fst (Counter.update m c) else c)
+                      let _updatedCounters =  model.counters |> List.mapi(fun i c-> if i = index then fst (Counter.update m c) else c)
                       { model with counters = _updatedCounters}, Cmd.none
   model', cmd
 
+let header _ _ = 
+  R.nav [ClassName "navbar is-info"; Role "navigation"] [
+    R.div [ClassName "navbar-brand"] [
+      R.a [ClassName "navbar-item"] [
+        R.img [Src "https://bulma.io/images/bulma-logo.png"] 
+      ] 
+    ]
+    R.div [ClassName "navbar-menu"] [
+      R.a [ClassName "navbar-item"] [R.str "Home"]
+      R.a [ClassName "navbar-item"] [R.str "Configuration"]
+      R.a [ClassName "navbar-item"] [R.str "About"]
+    ]
+  ]
+
+let content model dispatch = 
+    R.section [ClassName "section"] [
+      R.div [ClassName "container"] [
+        R.div [] [ R.h1 [] [R.str "title goes here"] 
+                   R.div [] (model.counters |> List.mapi (fun index m -> view m (fun m -> dispatch (CounterMsg (index, m))))) ]
+        ]
+    ]
+
+let footer _ _ = 
+  R.footer [ClassName "footer"] [
+    R.div [ClassName "container"] [
+      R.div [ClassName "content text-centered"] [
+        R.p [] [R.str "footer goes here"]
+      ]
+    ]
+  ]
+
 let view model dispatch =
-  let combined i m = dispatch (CounterMsg (i, m))
-  R.div [] [ R.h1 [] [R.str "something"] 
-             R.div [] (model.counters |> List.mapi (fun index m -> view m (combined index))) ]
+  R.div [] [
+      header model dispatch
+      content model dispatch
+      footer model dispatch
+  ]
 
 #if DEBUG
 open Elmish.Debug
