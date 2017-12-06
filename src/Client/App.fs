@@ -8,7 +8,6 @@ open Fable.Helpers.React.Props
 module R = Fable.Helpers.React
 
 open Fable.PowerPack.Fetch
-open Fable.Core
 open Fable.Core.JsInterop
 
 importAll "bulma/css/bulma.css"
@@ -57,9 +56,7 @@ let header _ _ =
 let content model dispatch = 
     R.section [ClassName "section"] [
       R.div [ClassName "container"] [
-        R.div [] [ R.h1 [] [R.str "title goes here"] 
-                   R.div [] (model.counters |> List.mapi (fun index m -> view m (fun m -> dispatch (CounterMsg (index, m))))) ]
-        ]
+       R.div [] (model.counters |> List.mapi (fun index m -> view m (fun m -> dispatch (CounterMsg (index, m))))) ]
     ]
 
 let footer _ _ = 

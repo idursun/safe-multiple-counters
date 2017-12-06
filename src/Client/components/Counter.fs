@@ -18,7 +18,9 @@ let update msg model =
 
 
 let view model dispatch =
-  R.div []
-      [ R.button [ ClassName "button"; OnClick (fun _ -> dispatch Decrement) ] [ R.str "-" ]
-        R.div [] [ R.str (sprintf "%A" model) ]
-        R.button [ ClassName "button"; OnClick (fun _ -> dispatch Increment) ] [ R.str "+" ] ]
+  R.div [ClassName "field is-grouped has-addons"]
+      [ 
+          R.p [ClassName "control"] [R.a [ ClassName "button"; OnClick (fun _ -> dispatch Decrement) ] [ R.str "-" ] ]
+          R.p [ClassName "control"] [R.p [] [R.str (sprintf "%A" model)]]
+          R.p [ClassName "control"] [R.a [ ClassName "button"; OnClick (fun _ -> dispatch Increment) ] [ R.str "+" ] ]
+      ]
