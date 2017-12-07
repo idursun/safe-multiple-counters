@@ -12,16 +12,21 @@ open Fable.Core.JsInterop
 
 importAll "bulma/css/bulma.css"
 
+open Fulma.Components
+open Fulma.Layouts
+
 type Model = {
+    activePage : string
     counters: Counter.Model list
   }
 
 type Msg =
   | Init of Result<int, exn>
+  | GoPage of string
   | CounterMsg of int * Counter.Msg
 
 let init () = 
-  let model = { counters = [Counter.init (); Counter.init ()] }
+  let model = { activePage = "Home"; counters = [Counter.init (); Counter.init ()] }
   let cmd = Cmd.ofPromise 
               (fetchAs<int> "/api/init") 
               [] 
@@ -34,38 +39,38 @@ let update msg (model : Model) =
   let model', cmd = match msg with
                     | Init (Ok v) -> {model with counters = [v; v]}, Cmd.none
                     | Init (Error _) -> {model with counters = [0; 0]}, Cmd.none
+                    | GoPage page  -> {model with activePage = page}, Cmd.none
                     | CounterMsg (index, m) -> 
                       let _updatedCounters =  model.counters |> List.mapi(fun i c-> if i = index then fst (Counter.update m c) else c)
                       { model with counters = _updatedCounters}, Cmd.none
   model', cmd
 
-let header _ _ = 
-  R.nav [ClassName "navbar is-info"; Role "navigation"] [
-    R.div [ClassName "navbar-brand"] [
-      R.a [ClassName "navbar-item"] [
-        R.img [Src "https://bulma.io/images/bulma-logo.png"] 
-      ] 
+let header _ dispatch = 
+  Navbar.navbar [] [
+    Navbar.brand_div [] [
+      Navbar.item_a [Navbar.Item.props [Href "#"]] []
     ]
-    R.div [ClassName "navbar-menu"] [
-      R.a [ClassName "navbar-item"] [R.str "Home"]
-      R.a [ClassName "navbar-item"] [R.str "Configuration"]
-      R.a [ClassName "navbar-item"] [R.str "About"]
+    Navbar.item_div [] [
+      Navbar.item_a [Navbar.Item.props [OnClick (fun _ -> dispatch (GoPage "home"))]] [R.str "Home"]
+      Navbar.item_a [Navbar.Item.props [OnClick (fun _ -> dispatch (GoPage "test"))]] [R.str "Test"]
+      Navbar.item_a [Navbar.Item.props [OnClick (fun _ -> dispatch (GoPage "about"))]] [R.str "About"]
+      Navbar.item_a [Navbar.Item.props [OnClick (fun _ -> dispatch (GoPage "configuration"))]] [R.str "Configuration"]
     ]
   ]
 
 let content model dispatch = 
-    R.section [ClassName "section"] [
-      R.div [ClassName "container"] [
-       R.div [] (model.counters |> List.mapi (fun index m -> view m (fun m -> dispatch (CounterMsg (index, m))))) ]
+    Section.section [] [
+       match model.activePage with
+       | "home" -> yield R.div [] (model.counters |> List.mapi (fun index m -> view m (fun m -> dispatch (CounterMsg (index, m)))))
+       | "test" -> yield R.str "test goes here"
+       | "about" -> yield R.str "about goes here"
+       | "configuration" -> yield R.str "configuration goes here"
+       | _ -> yield R.str "should not happen"
     ]
 
 let footer _ _ = 
-  R.footer [ClassName "footer"] [
-    R.div [ClassName "container"] [
-      R.div [ClassName "content text-centered"] [
-        R.p [] [R.str "footer goes here"]
-      ]
-    ]
+  Footer.footer [] [
+    R.str "footer goes here"
   ]
 
 let view model dispatch =
