@@ -2,7 +2,6 @@ module App
 
 open Elmish
 open Elmish.React
-open Counter
 
 open Fable.Helpers.React.Props
 module R = Fable.Helpers.React
@@ -15,6 +14,10 @@ importAll "bulma/css/bulma.css"
 open Fulma.Components
 open Fulma.Layouts
 
+open Counter
+open Components.Header
+open Components.Footer
+
 type Model = {
     activePage : string
     counters: Counter.Model list
@@ -22,11 +25,11 @@ type Model = {
 
 type Msg =
   | Init of Result<int, exn>
-  | GoPage of string
+  | HeaderMsg of Components.Header.Msg
   | CounterMsg of int * Counter.Msg
 
 let init () = 
-  let model = { activePage = "Home"; counters = [Counter.init (); Counter.init ()] }
+  let model = { activePage = "home"; counters = [Counter.init (); Counter.init ()] }
   let cmd = Cmd.ofPromise 
               (fetchAs<int> "/api/init") 
               [] 
@@ -39,24 +42,13 @@ let update msg (model : Model) =
   let model', cmd = match msg with
                     | Init (Ok v) -> {model with counters = [v; v]}, Cmd.none
                     | Init (Error _) -> {model with counters = [0; 0]}, Cmd.none
-                    | GoPage page  -> {model with activePage = page}, Cmd.none
+                    | HeaderMsg (GoPage m)  -> {model with activePage = m}, Cmd.none
                     | CounterMsg (index, m) -> 
                       let _updatedCounters =  model.counters |> List.mapi(fun i c-> if i = index then fst (Counter.update m c) else c)
                       { model with counters = _updatedCounters}, Cmd.none
   model', cmd
 
-let header _ dispatch = 
-  Navbar.navbar [] [
-    Navbar.brand_div [] [
-      Navbar.item_a [Navbar.Item.props [Href "#"]] []
-    ]
-    Navbar.item_div [] [
-      Navbar.item_a [Navbar.Item.props [OnClick (fun _ -> dispatch (GoPage "home"))]] [R.str "Home"]
-      Navbar.item_a [Navbar.Item.props [OnClick (fun _ -> dispatch (GoPage "test"))]] [R.str "Test"]
-      Navbar.item_a [Navbar.Item.props [OnClick (fun _ -> dispatch (GoPage "about"))]] [R.str "About"]
-      Navbar.item_a [Navbar.Item.props [OnClick (fun _ -> dispatch (GoPage "configuration"))]] [R.str "Configuration"]
-    ]
-  ]
+
 
 let content model dispatch = 
     Section.section [] [
@@ -68,16 +60,11 @@ let content model dispatch =
        | _ -> yield R.str "should not happen"
     ]
 
-let footer _ _ = 
-  Footer.footer [] [
-    R.str "footer goes here"
-  ]
-
 let view model dispatch =
   R.div [] [
-      header model dispatch
+      header model (HeaderMsg >> dispatch)
       content model dispatch
-      footer model dispatch
+      footerView model dispatch
   ]
 
 #if DEBUG
